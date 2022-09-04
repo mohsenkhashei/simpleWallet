@@ -12,8 +12,8 @@ contract Allowance {
         uint256 _oldAmount,
         uint256 _newAmount
     );
-    address private owner;
 
+    address private owner;
     constructor() {
         owner = msg.sender;
     }
@@ -33,13 +33,23 @@ contract Allowance {
         );
         _;
     }
-    mapping(address => uint256) public allowance;
 
+    mapping(address => uint256) public allowance;
+    /**
+     * adding address and amount to allow list
+     * @address address allowed
+     * @_amount amount allowed
+     */
     function addAllowance(address _who, uint256 _amount) public {
         emit AllowanceChanged(_who, msg.sender, allowance[_who], _amount);
         allowance[_who] = _amount;
     }
 
+    /**
+     * reducing amount after they withdraw money
+     * @address address 
+     * @_amount amount 
+     */
     function reduceAllowance(address _who, uint256 _amount) internal {
         emit AllowanceChanged(
             _who,

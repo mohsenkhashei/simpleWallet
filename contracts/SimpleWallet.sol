@@ -7,6 +7,11 @@ contract SimpleWallet is Allowance {
     event MoneySent(address indexed _beneficiary, uint256 _amount);
     event MoneyReceived(address indexed _from, uint256 _amount);
 
+    /**
+     * withdraw money only owner or in whose in allowance
+     * @address address of withdraw money to
+     * @_amount the amount
+     */
     function withdrawMoney(address payable _to, uint256 _amount)
         public
         onlyOwnerOrAllowed(_amount)
@@ -20,12 +25,6 @@ contract SimpleWallet is Allowance {
         }
         emit MoneySent(_to, _amount);
         _to.transfer(_amount);
-    }
-
-    uint256 public balance;
-
-    function getbalance() public {
-        balance = address(this).balance;
     }
 
     receive() external payable {
