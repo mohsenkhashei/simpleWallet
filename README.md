@@ -1,4 +1,4 @@
-## Simple wallet for sharing money with allowance list with amount
+## Simple wallet for sharing money with address & amount restriction
 
 
 ### **use cases**
