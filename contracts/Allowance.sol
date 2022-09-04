@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
 
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+
 contract Allowance {
+    using SafeMath for uint256;
+
+    event AllowanceChanged(
+        address indexed _forWho,
+        address indexed _fromWhom,
+        uint256 _oldAmount,
+        uint256 _newAmount
+    );
     address private owner;
 
     constructor() {
@@ -26,36 +36,17 @@ contract Allowance {
     mapping(address => uint256) public allowance;
 
     function addAllowance(address _who, uint256 _amount) public {
+        emit AllowanceChanged(_who, msg.sender, allowance[_who], _amount);
         allowance[_who] = _amount;
     }
 
     function reduceAllowance(address _who, uint256 _amount) internal {
-        allowance[_who] -= _amount;
-    }
-}
-
-contract SimpleWallet is Allowance {
-    function withdrawMoney(address payable _to, uint256 _amount)
-        public
-        onlyOwnerOrAllowed(_amount)
-    {
-        require(
-            _amount <= address(this).balance,
-            "there are not enough stored in the smart contract"
+        emit AllowanceChanged(
+            _who,
+            msg.sender,
+            allowance[_who],
+            allowance[_who].sub(_amount)
         );
-        if (_checkOwner()) {
-            reduceAllowance(msg.sender, _amount);
-        }
-        _to.transfer(_amount);
+        allowance[_who] = allowance[_who].sub(_amount);
     }
-
-    uint256 public balance;
-
-    function getbalance() public {
-        balance = address(this).balance;
-    }
-
-    receive() external payable {}
-
-    fallback() external payable {}
 }
